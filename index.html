@@ -1,1 +1,310 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Thul’Ka - LORE</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
+      font-family: 'Spectral', serif;
+      background-color: black;
+      color: white;
+    }
+
+    .entry-screen {
+      position: fixed;
+      z-index: 9999;
+      background: black;
+      color: white;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .background-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+    
+    .entry-screen button {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .entry-screen button {
+      font-size: 2rem;
+      padding: 1rem 2rem;
+      background: #9400D3;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+
+    .entry-screen button:hover {
+      background: #217dbb;
+    }
+
+    .intro {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9998;
+    }
+
+    .intro video {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    .intro.fade-out {
+      animation: fadeOut 1.5s ease-out forwards;
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+
+    .main-content {
+      display: none;
+      flex-direction: row;
+      flex-wrap: wrap;
+      min-height: 100vh;
+    }
+
+    .left, .right {
+      width: 50%;
+      min-height: 100vh;
+    }
+
+    .left {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(0,0,0,0.9), rgba(30,30,30,0.95)),
+                  linear-gradient(45deg, #B8860B, #808080, #DCDCDC);
+      background-blend-mode: overlay;
+      background-size: 400% 400%;
+      animation: holoPulse 15s ease infinite;
+      position: relative;
+    }
+
+    @keyframes holoPulse {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .left img {
+      max-width: 90%;
+      max-height: 90%;
+      position: relative;
+      z-index: 2;
+    }
+
+    .right {
+      position: relative;
+      background: radial-gradient(circle at top, #000 0%, #111 100%);
+      background-image: url("https://www.transparenttextures.com/patterns/asfalt-light.png");
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .highlight {
+      color: #3498db;
+    }
+
+    p {
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0;
+      animation: twinkle 2s infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+
+    /* Random rozmístění hvězd */
+    .star:nth-child(1) { top: 10%; left: 15%; animation-delay: 0s; }
+    .star:nth-child(2) { top: 20%; left: 40%; animation-delay: 1s; }
+    .star:nth-child(3) { top: 50%; left: 30%; animation-delay: 0.5s; }
+    .star:nth-child(4) { top: 70%; left: 80%; animation-delay: 1.5s; }
+    .star:nth-child(5) { top: 80%; left: 60%; animation-delay: 0.3s; }
+    .star:nth-child(6) { top: 25%; left: 75%; animation-delay: 0.7s; }
+    .star:nth-child(7) { top: 65%; left: 20%; animation-delay: 1.1s; }
+    .star:nth-child(8) { top: 35%; left: 50%; animation-delay: 0.8s; }
+    .star:nth-child(9) { top: 15%; left: 90%; animation-delay: 1.3s; }
+    .star:nth-child(10){ top: 45%; left: 10%; animation-delay: 0.9s; }
+
+    @media (max-width: 768px) {
+      .main-content {
+        flex-direction: column;
+      }
+
+      .left, .right {
+        width: 100%;
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Vstupní obrazovka -->
+  <div class="entry-screen">
+  <video autoplay muted loop playsinline class="background-video">
+    <source src="Video.mp4" type="video/mp4">
+  </video>
+    <button id="enterBtn">VSTUP</button>
+    
+  </div>
+
+  <!-- Úvodní animace -->
+  <div class="intro" id="intro">
+    <video id="introVideo" src="https://github.com/introduction2/Thar-Nek/raw/refs/heads/main/Animace%20-%20uvod%20postav.mp4" playsinline></video>
+  </div>
+
+  <!-- Hlavní obsah -->
+  <div class="main-content" id="mainContent">
+    <div class="left">
+      <img src="Thul’Ka.jpeg"> <alt="Postava">
+    </div>
+
+<form id="claimForm">
+  <input type="hidden" name="postava" value="Thul’Ka">
+  <label for="email">Zadej svůj e-mail (pro odemčení lore):</label><br>
+  <input type="email" name="email" required><br><br>
+  <button type="submit">Zapsat do sbírky</button>
+</form>
+
+<div id="result"></div>
+    
+<!-- Výpis výsledku -->
+<div id="result"></div>
+      <div class="right">
+      <div class="stars">
+        <div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
+        <div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
+      </div>
+
+      <h1>Thul’Ka – Vharinský Strážce</h1>
+      <p><strong>Thul’Ka není ochočená bestie</strong></p>
+
+      <h2>LORE</h2>
+      <p>Je to vědomá bytost, stvořená z harmonie přírody a krystalové energie planety Zor’Kar. V harenském jazyce znamená jeho jméno ‘ten, kdo slyší noční proudy’. Narodil se v době, kdy se temnota přelévala přes okrajové světy a jako jediné mládě přežil pád krystalové říše Vharinů. Od té doby sdílí mysl se Sha’rethem, se kterým tvoří nerozlučný obranný kruh hlubinných vesnic.</p>
+      <p>Thul’Ka nikdy neútočí první – ale když brání hranici, zanechává za sebou jen ozvěnu.</p>
+      <p>Dokáže se mentálně spojit se spojencem a předvídat útoky dřív, než se stanou.</p>
+      <p>Zvyšuje tak šanci na úspěšný obranný manévr celé družiny.</p>
+
+      <h2>Schopnosti</h2>
+      <p><span class="highlight">Fyzická síla  – 8/10:</span></p>
+      <p><span class="highlight">Rychlost – 7/10:</span></p>
+      <p><span class="highlight">Odolnost – 9/10:</span></p>
+      <p><span class="highlight">Inteligence– 8/10:</span></p>
+      
+
+       <h2>Zvláštnosti</h2>
+      <p>Krystalová kamufláž</p>
+      <p>Jeho černý pancíř se dokáže maskovat do okolního prostředí pomocí aktivních luminiscenčních buněk.</p>
+    </div>
+  </div>
+
+  <script>
+    const enterBtn = document.getElementById('enterBtn');
+    const entryScreen = document.querySelector('.entry-screen');
+    const intro = document.getElementById('intro');
+    const video = document.getElementById('introVideo');
+    const mainContent = document.getElementById('mainContent');
+
+    enterBtn.addEventListener('click', () => {
+      entryScreen.style.display = 'none';
+      intro.style.display = 'flex';
+      video.muted = false;
+      video.play();
+
+      setTimeout(() => {
+        intro.classList.add('fade-out');
+        setTimeout(() => {
+          intro.style.display = 'none';
+          mainContent.style.display = 'flex';
+        }, 1500);
+      }, 3000);
+    });
+  </script>
+<script>
+document.getElementById("claimForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const formData = new FormData(this);
+
+  // Logování pro ověření, co je odesíláno
+  formData.forEach((value, key) => {
+    console.log(key + ": " + value);  // Logování hodnoty každého pole
+  });
+
+  fetch("https://script.google.com/macros/s/AKfycbzO0IC7kzWsC-uac-_URaa6js5s3rjDOaG-Y88s5AU4TsNlVYEHVrilmEzMWzIjGIar/exec", {
+    method: "POST",
+    body: formData,
+    mode: 'no-cors' // Tato změna obejde CORS, ale nedostaneš zpět odpověď serveru
+  })
+  .then(() => {
+    // Odpověď nebude dostupná, ale můžeme stále informovat uživatele
+    document.getElementById("result").textContent = "Postava zapsána!";
+  })
+  .catch(() => {
+    document.getElementById("result").textContent = "Nastala chyba.";
+  });
+});
+</script>
+
+
+
+  
+</body>
+</html>
 
